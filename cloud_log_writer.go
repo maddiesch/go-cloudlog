@@ -135,14 +135,18 @@ func (w *CloudLogWriter) unsafe_sendBuffer(ctx context.Context, src int) error {
 	return nil
 }
 
-func (w *CloudLogWriter) Close() error {
-	if err := w.Send(context.Background()); err != nil {
+func (w *CloudLogWriter) CloseContext(ctx context.Context) error {
+	if err := w.Send(ctx); err != nil {
 		return err
 	}
 
 	w.wg.Wait()
 
 	return nil
+}
+
+func (w *CloudLogWriter) Close() error {
+	return w.CloseContext(context.Background())
 }
 
 func (w *CloudLogWriter) Send(ctx context.Context) error {
